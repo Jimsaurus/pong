@@ -1,0 +1,9 @@
+body{
+	max-width: 1000px;
+	text-align: center;
+}
+#game-canvas{
+	display: block;
+	margin: 20px auto;
+	background: #383838;
+}
