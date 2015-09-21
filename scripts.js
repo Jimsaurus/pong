@@ -20,6 +20,9 @@ app.ballSpeedX = 10;
 app.ballSpeedY = 4;
 //paddles
 app.paddle1Y = 250;
+app.paddle2Y = 250;
+
+app.paddleThickness = 10;
 app.paddleHeight = 100;
 
 // ============================
@@ -44,7 +47,7 @@ app.gameStart = function(){
 	//mouse position
 	app.canvas.addEventListener('mousemove', function(evt){
 		var mousePos = app.mousePosition(evt);
-		app.paddle1Y = mousePos.y - (app.paddleHeight/2);
+		app.paddle2Y = mousePos.y - (app.paddleHeight/2);
 	});
 }
 // ============================
@@ -62,8 +65,11 @@ app.drawAssets = function(){
 	app.drawSprites('#383838', 0, 0, app.canvas.width, app.canvas.height);
 	// ball
 	app.drawCircle('#fff', app.ballX, app.ballY, 10);
-	// paddle
-	app.drawSprites('#fff', 10, app.paddle1Y, 10, 100);
+	// paddle 1
+	app.drawSprites('#fff', 10, app.paddle1Y, app.paddleThickness, 100);
+	// paddle 2
+	app.drawSprites('#fff', app.canvas.width - 20, app.paddle2Y, app.paddleThickness, 100);
+
 }
 // DRAWSPRITE FUNCTION
 app.drawSprites = function(color, posX, posY, width, height){
@@ -77,21 +83,43 @@ app.drawCircle = function(color, centerX, centerY, radius){
 	app.ctx.arc(centerX, centerY, radius, 0, Math.PI*2, true);
 	app.ctx.fill();
 }
+// ============================
+// COMPUTER MOVEMENT FUNCTION
+// ============================
+app.computerMovement = function(){
+
+
+}
 
 // ============================
 // MOVEMENT FUNCTION
 // ============================
 app.movement = function(){
-	app.ballX = app.ballX + app.ballSpeedX;
-	app.ballY = app.ballY + app.ballSpeedY;
+	//animate the ball
+	app.ballX += app.ballSpeedX;
+	app.ballY += app.ballSpeedY;
+
+	//computer movement
+	app.computerMovement();
 
 	//bounce off right wall
 	if (app.ballX >= app.canvas.width){
-		app.ballSpeedX = -app.ballSpeedX;
+		if (app.ballY > app.paddle2Y && app.ballY < app.paddle2Y + app.paddleHeight ){
+			app.ballSpeedX = -app.ballSpeedX;
+		}else{
+			//app.ballSpeedX = -app.ballSpeedX;
+			app.ballReset();
+		}
 	}
 	//bounce off left wall
 	if (app.ballX <= 0){
-		app.ballSpeedX = -app.ballSpeedX;
+		if (app.ballY > app.paddle1Y && app.ballY < app.paddle1Y + app.paddleHeight ){
+			app.ballSpeedX = -app.ballSpeedX;
+		}else{
+			//app.ballSpeedX = -app.ballSpeedX;
+			app.ballReset();
+		}
+		
 	}
 	//bounce off bottom wall
 	if (app.ballY >= app.canvas.height){
@@ -103,9 +131,19 @@ app.movement = function(){
 	}
 }
 // ============================
+// BALL RESET FUNCTION
+// ============================
+app.ballReset = function(){
+	//reset ball in center
+	app.ballX = app.canvas.width/2;
+	app.ballY = app.canvas.height/2;
+	//change direction
+	app.ballSpeedX = -app.ballSpeedX;
+
+}
+// ============================
 // MOUSEPOSITION FUNCTION
 // ============================
-
 app.mousePosition = function(evt){
 	//get the mouse pos relative to the canvas
 	var rect = app.canvas.getBoundingClientRect();
@@ -116,8 +154,6 @@ app.mousePosition = function(evt){
 		x: mouseX,
 		y: mouseY
 	}
-
-
 }
 
 
